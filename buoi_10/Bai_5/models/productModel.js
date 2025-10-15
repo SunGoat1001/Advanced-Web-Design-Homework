@@ -16,7 +16,7 @@ const Product = {
                 return callback(null, result);
             }
         );
-    }
+    },
 };
 
 module.exports = Product

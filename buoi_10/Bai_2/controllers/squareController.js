@@ -12,4 +12,8 @@ exports.calculateSquare = (req, res) => {
     const area = square.getArea();
 
     res.render('index', { perimeter, area, sideLength });
-};  				
+};
+
+exports.aboutPage = (req, res) => {
+    res.render('about');
+}

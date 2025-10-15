@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bảng sản phẩm từ API</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: 20px auto;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="text-align:center">Danh sách sản phẩm từ API</h2>
+    <button id="addProductBtn" style="display:block;margin:10px auto;">Thêm sản phẩm</button>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Avatar</th>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dữ liệu sẽ được render ở đây -->
+        </tbody>
+    </table>
+
+    <!-- Form ẩn để thêm/sửa sản phẩm -->
+    <div id="productFormModal"
+        style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);align-items:center;justify-content:center;">
+        <form id="productForm"
+            style="background:#fff;padding:20px;border-radius:8px;min-width:300px;position:relative;">
+            <h3 id="formTitle">Thêm sản phẩm</h3>
+            <input type="hidden" id="productId">
+            <div>
+                <label>Avatar URL:</label><br>
+                <input type="text" id="productImg" style="width:100%">
+            </div>
+            <div>
+                <label>Name:</label><br>
+                <input type="text" id="productName" style="width:100%">
+            </div>
+            <div>
+                <label>Price:</label><br>
+                <input type="number" id="productPrice" style="width:100%">
+            </div>
+            <div style="margin-top:10px;text-align:right;">
+                <button type="submit" id="saveProductBtn">Lưu</button>
+                <button type="button" id="cancelProductBtn">Huỷ</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal xác nhận xoá -->
+    <div id="confirmDeleteModal"
+        style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:20px;border-radius:8px;min-width:300px;position:relative;">
+            <p>Bạn có chắc muốn xoá sản phẩm này?</p>
+            <div style="text-align:right;">
+                <button id="confirmDeleteBtn">Xoá</button>
+                <button id="cancelDeleteBtn">Huỷ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./CRUD.js"></script>
+    <script src="./components/ConfirmDeleteModal.js"></script>
+    <script src="./components/ProductForm.js"></script>
+    <script src="./components/ProductTable.js"></script>
+
+    <script>
+        let products = [];
+        let currentEditId = null;
+        let currentDeleteId = null;
+
+        function refreshTable() {
+            getDataFromAPI(apiURL, function (err, data) {
+                if (err) {
+                    alert('Lỗi khi lấy dữ liệu từ API!');
+                } else {
+                    products = data;
+                    renderProductTable(products, handleEdit, handleDelete);
+                }
+            });
+        }
+
+        function handleEdit(id) {
+            const product = products.find(p => p.id == id);
+            currentEditId = id;
+            showProductForm(product, handleSave, () => { });
+        }
+
+        function handleDelete(id) {
+            currentDeleteId = id;
+            showDeleteModal(() => {
+                deleteDataFromAPI(apiURL, currentDeleteId, function (err) {
+                    if (err) {
+                        alert('Lỗi khi xoá!');
+                    } else {
+                        alert('Xoá sản phẩm thành công!');
+                    }
+                    refreshTable();
+                });
+            }, () => { });
+        }
+
+        function handleSave(data) {
+            if (data.id) {
+                updateDataInAPI(apiURL, data.id, data, function (err) {
+                    if (err) {
+                        alert('Lỗi khi cập nhật!');
+                    } else {
+                        alert('Cập nhật sản phẩm thành công!');
+                    }
+                    refreshTable();
+                });
+            } else {
+                addDataToAPI(apiURL, data, function (err) {
+                    if (err) {
+                        alert('Lỗi khi thêm!');
+                    } else {
+                        alert('Thêm sản phẩm thành công!');
+                    }
+                    refreshTable();
+                });
+            }
+        }
+
+        document.getElementById('addProductBtn').onclick = function () {
+            showProductForm(null, handleSave, () => { });
+        };
+
+        // Khởi tạo bảng
+        refreshTable();
+    </script>
+</body>
+
+</html>
