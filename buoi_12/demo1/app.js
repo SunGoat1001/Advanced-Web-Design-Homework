@@ -8,10 +8,10 @@ const sequelize = require('./configs/database')
 const Product = require('./models/productModel')
 const port = process.env.PORT || 3000
 
-app.use(express.urlencoded())
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded());
 // app.use(bodyParser.urlencoded())
-app.use(express.static(path.join(__dirname, 'public')))
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 
 app.use('/', routes);
 

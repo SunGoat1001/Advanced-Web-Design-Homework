@@ -1,5 +1,31 @@
 const Product = require('../models/productModel')
 
+exports.getHomepage = async (req, res) => {
+    const page = parseInt(req.query.page) || 1
+    const limit = 10
+    const offset = (page - 1) * limit
+    const sortOrder = req.query.sort === 'desc' ? 'DESC' : 'ASC'
+
+    const { count, rows } = await Product.findAndCountAll({
+        limit,
+        offset,
+        order: [['name', sortOrder]]
+    })
+
+    res.render('pages/homepage', {
+        products: rows,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+        sortOrder
+    })
+}
+
+exports.getDetails = async (req, res) => {
+    const product = await Product.findByPk(req.params.id)
+
+    res.render('pages/productDetails', { product })
+}
+
 exports.getAll = async (req, res) => {
     const page = parseInt(req.query.page) || 1
     const limit = 10
@@ -31,7 +57,7 @@ exports.create = async (req, res) => {
 exports.editForm = async (req, res) => {
     const product = await Product.findByPk(req.params.id)
 
-    res.render('/admin/edit', { product })
+    res.render('admin/editProduct', { product })
 }
 
 exports.update = async (req, res) => {
