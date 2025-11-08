@@ -21,3 +21,11 @@ Dưới đây là các đường dẫn truy cập đến bài tập thầy đã 
 [Buổi 9](/buoi_9/)
 
 [Buổi 10](/buoi_10/)
+
+[Buổi 11](/buoi_11/)
+
+[Buổi 12](/buoi_12/)
+
+[Buổi 13](/buoi_13/)
+
+[Buổi 14](/buoi_14/)
