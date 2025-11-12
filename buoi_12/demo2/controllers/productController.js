@@ -1,0 +1,47 @@
+const Product = require('../models/Product');
+const { Op } = require('sequelize');
+
+exports.getAll = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    const sortOrder = req.query.sort === 'desc' ? 'DESC' : 'ASC';
+
+    const { count, rows } = await Product.findAndCountAll({
+        limit,
+        offset,
+        order: [['name', sortOrder]]
+    });
+
+    res.render('admin/index', {
+        products: rows,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+        sortOrder
+    });
+};
+
+exports.create = async (req, res) => {
+    const { name, price, description } = req.body;
+    const image = req.file ? req.file.filename : null;
+    await Product.create({ name, price, image, description });
+    res.redirect('/admin');
+};
+
+exports.editForm = async (req, res) => {
+    const product = await Product.findByPk(req.params.id);
+    res.render('admin/edit', { product });
+};
+
+exports.update = async (req, res) => {
+    const { name, price, description } = req.body;
+    const updateData = { name, price, description };
+    if (req.file) updateData.image = req.file.filename;
+    await Product.update(updateData, { where: { id: req.params.id } });
+    res.redirect('/admin');
+};
+
+exports.delete = async (req, res) => {
+    await Product.destroy({ where: { id: req.params.id } });
+    res.redirect('/admin');
+};

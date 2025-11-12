@@ -1,0 +1,64 @@
+<%- include('../layout') %>
+    <div class="card p-3 shadow-sm">
+        <h3 class="mb-3 text-center">📦 Quản lý sản phẩm</h3>
+
+        <form action="/admin?sort=<%= sortOrder === 'asc' ? 'desc' : 'asc' %>" method="get">
+            <button class="btn btn-secondary mb-2">Sắp xếp theo tên: <%= sortOrder %></button>
+        </form>
+
+        <form action="/admin/add" method="POST" enctype="multipart/form-data" class="row g-2 mb-3">
+            <div class="col-md-2"><input type="text" name="name" placeholder="Tên" class="form-control" required></div>
+            <div class="col-md-2"><input type="number" name="price" placeholder="Giá" class="form-control"></div>
+            <div class="col-md-3"><input type="file" name="image" class="form-control"></div>
+            <div class="col-md-3"><input type="text" name="description" placeholder="Mô tả" class="form-control"></div>
+            <div class="col-md-2"><button class="btn btn-primary w-100">Thêm</button></div>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Mô tả</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% products.forEach(p=> { %>
+                    <tr>
+                        <td>
+                            <%= p.id %>
+                        </td>
+                        <td><img src="/uploads/<%= p.image %>" width="60"></td>
+                        <td>
+                            <%= p.name %>
+                        </td>
+                        <td>
+                            <%= p.price %>
+                        </td>
+                        <td>
+                            <%= p.description %>
+                        </td>
+                        <td>
+                            <a href="/admin/edit/<%= p.id %>" class="btn btn-sm btn-warning">Sửa</a>
+                            <a href="/admin/delete/<%= p.id %>" class="btn btn-sm btn-danger">Xóa</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="/admin?page=<%= i %>&sort=<%= sortOrder %>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <% } %>
+            </ul>
+        </nav>
+    </div>
