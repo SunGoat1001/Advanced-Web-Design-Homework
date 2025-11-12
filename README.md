@@ -29,3 +29,5 @@ Dưới đây là các đường dẫn truy cập đến bài tập thầy đã 
 [Buổi 13](/buoi_13/)
 
 [Buổi 14](/buoi_14/)
+
+[Buổi 15](/buoi_15/)
